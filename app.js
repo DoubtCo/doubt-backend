@@ -5,12 +5,15 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const session = require("express-session");
 const passport = require("passport");
+const Code = require('./models/codes');
 
 
 //import routes
 const videoRoutes = require("./routes/video");
 const authRoutes = require("./routes/auth");
 const questionRoutes = require("./routes/question");
+const emailRoutes = require("./routes/email");
+const cookieParser = require("cookie-parser");
 
 //db connection
 mongoose.connect("" + process.env.MONGODB_URL, {}, () => {
@@ -39,12 +42,36 @@ app.use(
 require("./helpers/passport_config");
 app.use(passport.initialize());
 app.use(passport.session());
+app.use(cookieParser());
 
 //routes middleware
 app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
+app.use("/email", emailRoutes);
 
+app.get('/emailVerify/:code',async(req,res,next)=>{
+  try{
+    let code=req.params.code;
+    let found=await Code.findOne({code});
+    let status;
+    if(found)
+    {
+      status="Done";
+    }
+    else{
+      status="Fail";
+    }
+    res.send(status);
+  }
+  catch(err)
+  {
+    next(err);
+  }
+})
+app.use(function (err, req, res, next) {
+  res.status(err.status||500).send({status:err.status||500,error:err.message});
+})
 //port
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}`));

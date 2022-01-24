@@ -1,5 +1,5 @@
 const mongoose = require('mongoose');
-
+const jwt=require('jsonwebtoken');
 //Schema for users
 const userSchema = new mongoose.Schema({
     name:{
@@ -13,6 +13,10 @@ const userSchema = new mongoose.Schema({
         required: true,
         unique: 32
     },
+    password:{
+        type:String,
+        required:true
+    },
     about:{
         type: String,
         trim: true
@@ -21,8 +25,22 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default:0
     },
+    tokens:[{
+        token:{
+            type:String,
+            required:true
+        }
+    }],
     hash: String,
     salt: String
 }, {timestamps: true});
 
+userSchema.methods.createAuthToken=async function(){
+    const user=this;
+    const token=jwt.sign({_id:user._id.toString()},process.env.JWT_SECRET);
+    user.tokens=user.tokens.concat({token:token});//.concat combines two or more array
+    // console.log(user);
+    await user.save();
+    return token;
+}
 module.exports = mongoose.model('User', userSchema);
