@@ -5,14 +5,12 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const session = require("express-session");
 const passport = require("passport");
+const cors = require("cors");
 const Code = require('./models/codes');
-
-
 //import routes
 const videoRoutes = require("./routes/video");
 const authRoutes = require("./routes/auth");
 const questionRoutes = require("./routes/question");
-const emailRoutes = require("./routes/email");
 const cookieParser = require("cookie-parser");
 
 //db connection
@@ -27,6 +25,7 @@ const app = express();
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
+app.use(cors());
 
 //session config
 app.use(
@@ -48,8 +47,6 @@ app.use(cookieParser());
 app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
-app.use("/email", emailRoutes);
-
 app.get('/emailVerify/:code',async(req,res,next)=>{
   try{
     let code=req.params.code;
