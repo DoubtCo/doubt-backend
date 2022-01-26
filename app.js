@@ -5,7 +5,13 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const session = require("express-session");
 const passport = require("passport");
+<<<<<<< HEAD
+const path = require("path");
+const fs = require("fs");
+const https = require("https");
+=======
 const cors = require("cors");
+>>>>>>> c7ea17bf35ba8673c31159e7c3cbb6219e3fcc21
 const Code = require('./models/codes');
 //import routes
 const videoRoutes = require("./routes/video");
@@ -72,3 +78,10 @@ app.use(function (err, req, res, next) {
 //port
 const port = process.env.PORT || 5000;
 app.listen(port, () => console.log(`Listening on port ${port}`));
+
+const secureServer = https.createServer({
+  key: fs.readFileSync(path.join(__dirname, './cert/key.pem')),
+  cert: fs.readFileSync(path.join(__dirname, './cert/cert.pem')),
+}, app);
+
+secureServer.listen(5001, () => console.log('Secure server 🚀🔑 on port 5001'))
