@@ -1,5 +1,6 @@
 const mongoose = require('mongoose');
 const jwt=require('jsonwebtoken');
+
 //Schema for users
 const userSchema = new mongoose.Schema({
     name:{
@@ -7,15 +8,17 @@ const userSchema = new mongoose.Schema({
         trim: true,
         maxlength: 32
     },
-    email:{          //email field, named username for passport-local-mongoose to work
-        type: String,   //password field saved automatically by passport-local-mongoose
+    email:{             
+        type: String,   
         trim: true,
         required: true,
         unique: 32
     },
     password:{
         type:String,
-        required:true
+    },
+    phone:{
+        type:Number
     },
     about:{
         type: String,
@@ -25,14 +28,19 @@ const userSchema = new mongoose.Schema({
         type: Number,
         default:0
     },
+    activationStatus: {
+        type: String,
+        enum: ['active', 'pending'],
+        default: 'pending'
+    },
+    hash: String,
+    salt: String,
     tokens:[{
         token:{
             type:String,
             required:true
         }
-    }],
-    hash: String,
-    salt: String
+    }]
 }, {timestamps: true});
 
 userSchema.methods.createAuthToken=async function(){
@@ -43,4 +51,5 @@ userSchema.methods.createAuthToken=async function(){
     await user.save();
     return token;
 }
+
 module.exports = mongoose.model('User', userSchema);

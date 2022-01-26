@@ -23,6 +23,7 @@ exports.deleteVideo = async (req,res) =>{
 
 //Controller to add video to DB
 exports.uploadVideo = async (req,res) =>{
+    // console.log(req);
     // console.log(req.file);
     var newVid = new Video({
         videoId: req.file.key,
@@ -34,7 +35,9 @@ exports.uploadVideo = async (req,res) =>{
     });
 
     await newVid.save();
-    res.redirect("/video/");
+    console.log("Uploaded");
+    res.json({status: "OK"});
+    // res.redirect("/video/");
 }
 
 //Controller to find video by id
@@ -52,7 +55,8 @@ exports.getVideoById = (req,res) => {
 //Controller for text based search
 exports.textSearch = async (req,res) => {
     const searchText = req.query.searchText;
-    Video.find({videoTitle: {$regex: new RegExp(searchText)}}, {_id:0, videoTitle:1, videoDesc:1}).limit(10)
+    console.log(searchText);
+    Video.find({$text: {$search: searchText}}, {_id:0, videoTitle:1, videoDesc:1}).limit(10)
     .exec(function(err, docs){
         if(!err){
             res.send(docs);
