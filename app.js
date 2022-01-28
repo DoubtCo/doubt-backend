@@ -5,13 +5,10 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const session = require("express-session");
 const passport = require("passport");
-<<<<<<< HEAD
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
-=======
 const cors = require("cors");
->>>>>>> c7ea17bf35ba8673c31159e7c3cbb6219e3fcc21
 const Code = require('./models/codes');
 //import routes
 const videoRoutes = require("./routes/video");
