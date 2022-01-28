@@ -49,6 +49,7 @@ async function main(email, subject, message) {
 
   // Preview only available when sending through an Ethereal account
   console.log("Preview URL: %s", nodemailer.getTestMessageUrl(info));
+  console.log(info);
   // Preview URL: https://ethereal.email/message/WaQKMgKddxQDoou...
 }
 

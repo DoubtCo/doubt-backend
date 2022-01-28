@@ -6,7 +6,7 @@ const uuid = require('uuid').v4;
 const path = require('path');
 const { s3 } = require('../helpers/s3_config');
 
-const upload = multer({
+exports.upload = multer({
     storage: multerS3({
         s3: s3,
         bucket: process.env.S3_BUCKET,
@@ -15,11 +15,23 @@ const upload = multer({
             cb(null, {fieldName: file.fieldname})
         },
         key: (req, file, cb) => {
+            const title = req.body.videoTitle;
+            const og = file.originalname;
             const ext = path.extname(file.originalname);
-            cb(null, `${uuid()}${ext}`);    //Generates Unique name for Video
+            cb(null, `${title}-${uuid()}${ext}`);    //Generates Unique name for Video
         }
     })
 })
 
 
-module.exports = { upload }
+exports.uploadImage = multer({
+    limits: {
+        fileSize: 500000
+    },
+    fileFilter(req, files, done) {
+        if (!files.originalname.match(/\.(jpg|png|jpeg)$/)) {
+            return done(new Error('Please Upload an image'));
+        }
+        done(undefined, true);
+    }
+});

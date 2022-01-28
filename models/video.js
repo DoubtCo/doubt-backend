@@ -29,10 +29,13 @@ const videoSchema = new mongoose.Schema({
     comments: [{
         type:mongoose.SchemaTypes.ObjectId,
         ref: 'comment'
+    }],
+    images:[{
+        type:Buffer
     }]
 }, {timestamps: true});
 
 //Index to make text based search from title and description possible
-videoSchema.index({videoTitle: 'text', videoDesc: 'text'});
+videoSchema.index({videoTitle: 'text', videoDesc: 'text'}, {match: 'partial'});
 
 module.exports = mongoose.model('Video', videoSchema);

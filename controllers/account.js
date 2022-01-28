@@ -8,7 +8,7 @@ exports.generateVerificationMail = async (req, res, next) => {
     let email = req.body.email;
     let ucode = uuid();
 
-    await sendMail(email, 'Please Activate Your Doubt Account' ,`Click on the link below to activate your account - http://localhost:5000/auth/signup/${ucode}`);
+    await sendMail(email, 'Please Activate Your Doubt Account' ,`Click on the link below to activate your account - https://localhost:5001/auth/signup/${ucode}`);
     
     let code = new Code({ code: ucode, email, codeType: 'verify'});
     setTimeout(async () => {
@@ -46,7 +46,7 @@ exports.forgetPassword = async (req, res, next) => {
       let Pcode = new Code({ code, email: req.body.email, codeType:'forget' });
       await Pcode.save();
 
-      sendMail(req.body.email,'Password Changed', `Please follow this link to reset your password - http://localhost:5000/auth/changePassword/${code}`);
+      sendMail(req.body.email,'Password Changed', `Please follow this link to reset your password - https://localhost:5001/auth/changePassword/${code}`);
       setTimeout(async () => {
         await Pass.findByIdAndDelete(Pcode._id);
       }, 3600000);
