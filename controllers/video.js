@@ -1,4 +1,6 @@
 const Video = require("../models/video"); //import DB Schema for DB CRUD operations
+const Solution = require("../models/solution");
+const Note = require("../models/notes");
 const { s3 } = require("../helpers/s3_config");
 
 //Controller to delete video from S3 first and then from DB
@@ -29,23 +31,71 @@ exports.deleteVideo = async (req, res) => {
   return res.json({ status: "OK" });
 };
 
+exports.uploadSolution =async (req,res,next)=>{
+  try{
+    if(req.query.type==="video")
+    {
+      let [vid]=req.files.video;
+      let [thumb]=req.files.thumb;
+      let [note]=req.files.note;
+      let noteVar;
+      if(note)
+      {
+        noteVar=new Note({
+          noteBucket:note.bucket,
+          noteURL:note.location
+        })
+        await noteVar.save();
+      }
+      let video=new Video({
+        videoBucket:vid.bucket,
+        videoUrl:vid.location,
+        thumbnail:thumb.location
+      });
+      await video.save();
+      let solution;
+      if(noteVar)
+      {
+        solution=new Solution({
+          title:req.body.title,
+          description:req.body.description,
+          video:video._id,
+          note:noteVar._id,
+          createdBy:req.user._id
+        })
+      }
+      else{
+        solution=new Solution({
+          title:req.body.title,
+          description:req.body.decscription,
+          video:video._id,
+        })
+      }
+      await solution.save();
+    }
+  }
+  catch(err)
+  {
+    next(err);
+  }
+}
 //Controller to add video to DB
 exports.uploadVideo = async (req, res, next) => {
   try {
+    // console.log(req.files);
     const [vid] = req.files.video;
-    console.log(vid);
-    // console.log(req.file);
+    const [img] = req.files.image;
+    
     var newVid = new Video({
-      videoId: vid.key,
+      // videoId: vid.key,
       videoBucket: vid.bucket,
       videoURL: vid.location,
-      videoTitle: req.body.videoTitle,
-      videoDesc: req.body.videoDesc,
+      // videoTitle: req.body.videoTitle,
+      // videoDesc: req.body.videoDesc,
       uploadedBy: req.user._id,
+      thumbnail: img.location,
     });
-    // console.log(req.file);
-    console.log(req.files);
-    console.log(newVid);
+
     if (newVid.videoId) {
       // let product = await Product.findById(req.params.productid);
       for (let i = 0; i < req.files.length; i++) {
@@ -59,9 +109,8 @@ exports.uploadVideo = async (req, res, next) => {
     } else {
       throw new Error("Please try again with valid product id");
     }
-    // await newVid.save();
+    await newVid.save();
     console.log("Uploaded");
-    res.json({ status: "OK" });
     // res.redirect("/video/"
   } catch (err) {
     next(err);
