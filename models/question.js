@@ -12,10 +12,10 @@ const questionSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId,
     ref: 'user'
   },
-  videoId: {
+  solutionId: [{
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'video'
-  },
+      ref: 'solution'
+  }],
   tags: [String]
 });
 

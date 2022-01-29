@@ -1,4 +1,4 @@
-//Middleware to upload video to Amazon S3
+//Middleware to upload media to Amazon S3
 
 const multer = require('multer');
 const multerS3 = require('multer-s3');
@@ -16,7 +16,6 @@ exports.upload = multer({
         },
         key: (req, file, cb) => {
             const title = req.body.videoTitle;
-            const og = file.originalname;
             const ext = path.extname(file.originalname);
             cb(null, `${title}-${uuid()}${ext}`);    //Generates Unique name for Video
         }

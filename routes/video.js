@@ -18,10 +18,10 @@ const { upload, uploadImage } = require('../helpers/multer_connection'); //Multe
 router.get('/', (req,res) => {res.sendFile(path.join(__dirname, '..', "/public/upload.html"))}); // Simply redirects to an html page for testing purposes
 router.get('/home',async (req,res) => {
     const data = await Video.find({});
-    console.log(data);
+    // console.log(data);
     res.send(data);
 })
-router.post('/upload',auth,upload.fields([{name:'video',maxCount:1}, {name:'image', maxCount:1}])/*uploadImage.fields([{name:'image', maxCount:1}])*/,uploadVideo); //Middleware uploads to S3 while controllers update DB
+router.post('/upload',auth,upload.fields([{name:'video',maxCount:1}, {name:'image', maxCount:4},{name:'pdf',maxCount:1}])/*uploadImage.fields([{name:'image', maxCount:1}])*/,uploadVideo); //Middleware uploads to S3 while controllers update DB
 router.get('/delete/:videoId', deleteVideo);
 router.get('/search', textSearch);
 router.get('/:videoId', getVideoById);

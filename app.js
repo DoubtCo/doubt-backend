@@ -25,10 +25,15 @@ mongoose.connect("" + process.env.MONGODB_URL, {}, () => {
 const app = express();
 
 //middleware
+// app.enable('trust proxy');
+// app.use((req, res, next) => {
+//     req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
+// })
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
+
 
 //session config
 app.use(
@@ -74,11 +79,11 @@ app.use(function (err, req, res, next) {
 })
 //port
 const port = process.env.PORT || 5000;
-app.listen(port, () => console.log(`Listening on port ${port}`));
+app.listen(5001, () => console.log(`Listening on port ${5001}`));
 
-const secureServer = https.createServer({
-  key: fs.readFileSync(path.join(__dirname, './cert/key.pem')),
-  cert: fs.readFileSync(path.join(__dirname, './cert/cert.pem')),
-}, app);
+// const secureServer = https.createServer({
+//   key: fs.readFileSync(path.join(__dirname, './cert/key.pem')),
+//   cert: fs.readFileSync(path.join(__dirname, './cert/cert.pem')),
+// }, app);
 
-secureServer.listen(5001, () => console.log('Secure server 🚀🔑 on port 5001'))
+// secureServer.listen(port, () => console.log(`Secure server 🚀🔑 on port ${port}`))

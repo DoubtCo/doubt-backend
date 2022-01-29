@@ -23,6 +23,8 @@ exports.sessionSignUp = (req, res) => {
 
 exports.jwtSignUp = async (req, res, next) => {
   try {
+    console.log(req.body);
+    console.log(req.data);
     const saltHash = encryptPassword(req.body.password);
 
     const salt = saltHash.salt;
