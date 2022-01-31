@@ -16,7 +16,19 @@ const questionSchema = new mongoose.Schema({
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'solution'
   }],
-  tags: [String]
+  report:[{
+    reason:{
+      type:String
+    },
+    user:{
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'solution'
+    }
+  }],
+  tags:[{
+      type: mongoose.SchemaTypes.ObjectId,
+      ref: 'tag'
+  }]
 });
 
 module.exports = new mongoose.model('Question', questionSchema);

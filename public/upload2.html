@@ -5,13 +5,20 @@
     <meta http-equiv="X-UA-Compatible" content="IE=edge">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
     <title>Upload 2.0</title>
+    <style>
+        form {
+            display: flex;
+            flex-direction: column;
+            width:max-content;
+            margin: 20px;
+        }
+    </style>
 </head>
 <body>
     <div>
-    <form>
-        <input type="file" name="upload" accept="application/pdf"/>
+    <form method="post" action="/video/upload?type=video" enctype="multipart/form-data">
         <label for="question">Question</label>
-        <input type="text" name="question">
+        <input type="text" name="question" id="questionTitle">
         <label for="title">Solution Title</label>
         <input type="text" name="title">
         <label for="description">Description</label>
@@ -19,9 +26,35 @@
         <input type="file" name="video" accept="video/*">
         <label for="tags">Tags</label>
         <input type="text" name="tags">
-        <label for="question">Question</label>
-        <input type="files" name="question" multiple>
+        <label for="image">Images</label>
+        <input type="file" name="image"  accept="image/*" multiple>
+        <label for="note">Notes</label>
+        <input type="file" name="note"  accept="application/pdf" multiple>
+        <button type="submit">Submit</button>
+        <input type="text" name="questionId" id="questionId" hidden value="">
     </form>
 </div>
 </body>
+<script>
+    let arr=window.location.href.split('/');
+    let id=arr[arr.length-1];
+    console.log(id);
+    document.getElementById('questionId').value=id;
+    console.log(document.getElementById('questionId'));
+    
+    let getQuestionTitle=async()=>{
+        let buffer=await fetch('/question/getQuestionTitle',{
+            method:'POST',
+            headers:{
+                'content-type':'application/json'
+            },
+            body:JSON.stringify({id})
+        })
+        let ans=await buffer.json();
+        console.log(ans);
+        document.getElementById('questionTitle').value=ans.title;
+    }
+    getQuestionTitle();
+
+</script>
 </html>

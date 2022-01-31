@@ -1,77 +1,94 @@
 const Video = require("../models/video"); //import DB Schema for DB CRUD operations
 const Solution = require("../models/solution");
+const Question = require("../models/question");
 const Note = require("../models/notes");
+const Image = require("../models/image");
 const { s3 } = require("../helpers/s3_config");
+const question = require("../models/question");
 
 //Controller to delete video from S3 first and then from DB
-exports.deleteVideo = async (req, res) => {
-  await Video.find({ videoId: req.params.videoId }, (err, vid) => {
-    if (!err) {
-      var params = { Bucket: vid[0].videoBucket, Key: vid[0].videoId };
+// exports.deleteVideo = async (req, res) => {
+//   await Video.find({ videoId: req.params.videoId }, (err, vid) => {
+//     if (!err) {
+//       var params = { Bucket: vid[0].videoBucket, Key: vid[0].videoId };
 
-      s3.deleteObject(params, (err) => {
-        if (err) {
-          console.log(err);
-        } else {
-          console.log("Deletion Successful");
-        }
-      });
-    }
-  })
-    .clone()
-    .exec();
+//       s3.deleteObject(params, (err) => {
+//         if (err) {
+//           console.log(err);
+//         } else {
+//           console.log("Deletion Successful");
+//         }
+//       });
+//     }
+//   })
+//     .clone()
+//     .exec();
 
-  Video.findOneAndDelete({ videoId: req.params.videoId }, (err) => {
-    if (!err) {
-      console.log("Deleted from DB");
-    } else {
-      console.log(err);
-    }
-  });
-  return res.json({ status: "OK" });
-};
+//   Video.findOneAndDelete({ videoId: req.params.videoId }, (err) => {
+//     if (!err) {
+//       console.log("Deleted from DB");
+//     } else {
+//       console.log(err);
+//     }
+//   });
+//   return res.json({ status: "OK" });
+// };
 
 exports.uploadSolution =async (req,res,next)=>{
   try{
     if(req.query.type==="video")
     {
+      // console.log(req.files);
       let [vid]=req.files.video;
-      let [thumb]=req.files.thumb;
-      let [note]=req.files.note;
-      let noteVar;
+      // let [thumb]=req.files.thumb;
+      let note=req.files.note||undefined;
+      let img=req.files.image||undefined;
+      console.log(img);
+      let images=new Array;
+      if(img)
+      {
+        img.forEach(async (item)=>{
+          let temp=new Image(({
+            imageBucket:item.bucket,
+            imageURL:item.location
+          }));
+          await temp.save();
+          images.push(temp._id);
+        })
+      }
+      let noteVar=new Array;
       if(note)
       {
-        noteVar=new Note({
-          noteBucket:note.bucket,
-          noteURL:note.location
+        note.forEach(async(item)=>{
+          let temp=new Note({
+            noteBucket:item.bucket,
+            noteURL:item.location
+          });
+          await temp.save();
+          noteVar.push(temp._id);
         })
-        await noteVar.save();
+       
       }
       let video=new Video({
         videoBucket:vid.bucket,
-        videoUrl:vid.location,
-        thumbnail:thumb.location
+        videoURL:vid.location,
+        // thumbnail:thumb.location
       });
       await video.save();
       let solution;
-      if(noteVar)
-      {
         solution=new Solution({
           title:req.body.title,
           description:req.body.description,
           video:video._id,
-          note:noteVar._id,
+          note:noteVar,
+          image:images,
           createdBy:req.user._id
         })
-      }
-      else{
-        solution=new Solution({
-          title:req.body.title,
-          description:req.body.decscription,
-          video:video._id,
-        })
-      }
-      await solution.save();
+        await solution.save();
+        let ques=await Question.findById(req.body.questionId);
+        ques.solutionId.push(solution._id);
+        await ques.save();
+      res.send({status:"Done"});
     }
   }
   catch(err)
@@ -118,17 +135,17 @@ exports.uploadVideo = async (req, res, next) => {
 };
 
 //Controller to find video by id
-exports.getVideoById = (req, res) => {
-  Video.find({ videoId: req.params.videoId }, (err, result) => {
-    if (!err) {
-      console.log(req.params);
-      console.log(result[0]);
-      res.send(result[0]);
-    } else {
-      console.log(err);
-    }
-  });
-};
+// exports.getVideoById = (req, res) => {
+//   Video.find({ videoId: req.params.videoId }, (err, result) => {
+//     if (!err) {
+//       console.log(req.params);
+//       console.log(result[0]);
+//       res.send(result[0]);
+//     } else {
+//       console.log(err);
+//     }
+//   });
+// };
 
 //Controller for text based search
 exports.textSearch = async (req, res) => {

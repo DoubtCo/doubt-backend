@@ -16,10 +16,10 @@ let solutionSchema=new mongoose.Schema({
         type:mongoose.SchemaTypes.ObjectId,
         ref:'image'
     }],
-    note:{
+    note:[{
         type:mongoose.SchemaTypes.ObjectId,
         ref:'note'
-    },
+    }],
     tags:[{
         type:mongoose.SchemaTypes.ObjectId,
         ref:'tag'
@@ -27,6 +27,10 @@ let solutionSchema=new mongoose.Schema({
     createdBy:{
         type:mongoose.SchemaTypes.ObjectId,
         ref:'user'
+    },
+    view:{
+        type:Number,
+        default:0
     }
 },{timestamps:true});
 
