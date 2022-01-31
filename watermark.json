@@ -1,0 +1,27 @@
+{
+    "timeline": {
+        "background": "#000000",
+        "tracks": [
+            {
+                "clips": [
+                    {
+                        "asset": {
+                            "type": "video",
+                            "src": "https://bucket-for-doubt-test.s3.amazonaws.com/undefined-0ff2ff79-9e68-4e4e-b757-6c8a951fd938.mp4"
+                        },
+                        "start": 0,
+                        "length": 15,
+                        "transition": {
+                            "in": "fade",
+                            "out": "fade"
+                        }
+                    }
+                ]
+            }
+        ]
+    },
+    "output": {
+        "format": "mp4",
+        "resolution": "sd"
+    }
+}
