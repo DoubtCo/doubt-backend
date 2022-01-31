@@ -11,7 +11,7 @@ const multer = require('multer');
 
 //Import Controllers and Helpers for the routes
 const Video = require('../models/video');
-const { textSearch, getVideoById, uploadVideo, deleteVideo } = require('../controllers/video');
+const { textSearch, getVideoById, uploadVideo, deleteVideo, uploadSolution } = require('../controllers/video');
 const { upload, uploadImage } = require('../helpers/multer_connection'); //Multer upload middleware
 
 //Routes
@@ -21,7 +21,8 @@ router.get('/home',async (req,res) => {
     // console.log(data);
     res.send(data);
 })
-router.post('/upload',auth,upload.fields([{name:'video',maxCount:1}, {name:'image', maxCount:4},{name:'pdf',maxCount:1}])/*uploadImage.fields([{name:'image', maxCount:1}])*/,uploadVideo); //Middleware uploads to S3 while controllers update DB
+router.get('/solution/:id',(req,res)=>{res.sendFile(path.join(__dirname, '..', "/public/upload2.html"))});
+router.post('/upload',auth,upload.fields([{name:'video',maxCount:1}, {name:'image', maxCount:4},{name:'note',maxCount:3}])/*uploadImage.fields([{name:'image', maxCount:1}])*/,uploadSolution); //Middleware uploads to S3 while controllers update DB
 router.get('/delete/:videoId', deleteVideo);
 router.get('/search', textSearch);
 router.get('/:videoId', getVideoById);

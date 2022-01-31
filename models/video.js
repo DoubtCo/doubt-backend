@@ -32,6 +32,5 @@ const videoSchema = new mongoose.Schema({
     }
 }, {timestamps: true});
 
-//Index to make text based search from title and description possible
 
 module.exports = mongoose.model('Video', videoSchema);
