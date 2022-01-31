@@ -5,11 +5,13 @@ const mongoose = require("mongoose");
 const morgan = require("morgan");
 const session = require("express-session");
 const passport = require("passport");
+const template=require('./watermark.json');
 const path = require("path");
 const fs = require("fs");
 const https = require("https");
 const cors = require("cors");
 const Code = require('./models/codes');
+const client=require("twilio")(process.env.ACCOUNT_SID,process.env.AUTH_TOKEN);
 //import routes
 const videoRoutes = require("./routes/video");
 const authRoutes = require("./routes/auth");
@@ -55,6 +57,16 @@ app.use(cookieParser());
 app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
+app.post('/phoneVerify',async (req,res,next)=>{
+  let num="+91"+req.body.number;
+  client.messages
+  .create({
+     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+     from: '+18065152334',
+     to: '+919978900824'
+   })
+  .then(message =>res.send(message));
+})
 app.get('/emailVerify/:code',async(req,res,next)=>{
   try{
     let code=req.params.code;
@@ -74,6 +86,18 @@ app.get('/emailVerify/:code',async(req,res,next)=>{
     next(err);
   }
 })
+
+app.post('/watermark',async (req,res,next)=>{
+  try{
+    
+  }
+  catch(err)
+  {
+    next(err);
+  }
+})
+
+
 app.use(function (err, req, res, next) {
   res.status(err.status||500).send({status:err.status||500,error:err.message});
 })
