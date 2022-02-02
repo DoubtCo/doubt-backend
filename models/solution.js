@@ -20,6 +20,15 @@ let solutionSchema=new mongoose.Schema({
         type:mongoose.SchemaTypes.ObjectId,
         ref:'note'
     }],
+    report:[{
+        reason:{
+          type:String
+        },
+        user:{
+          type: mongoose.SchemaTypes.ObjectId,
+          ref: 'solution'
+        }
+    }],
     tags:[{
         type:mongoose.SchemaTypes.ObjectId,
         ref:'tag'
@@ -33,6 +42,10 @@ let solutionSchema=new mongoose.Schema({
         default:0
     }
 },{timestamps:true});
+
+solutionSchema.virtual('reportCount').get(function () {
+    return this.report.length
+});
 
 
 module.exports = mongoose.model('solution', solutionSchema);
