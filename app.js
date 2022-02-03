@@ -11,11 +11,12 @@ const fs = require("fs");
 const https = require("https");
 const cors = require("cors");
 const Code = require('./models/codes');
-const client=require("twilio")(process.env.ACCOUNT_SID,process.env.AUTH_TOKEN);
+// const client=require("twilio")(process.env.ACCOUNT_SID,process.env.AUTH_TOKEN);
 //import routes
 const videoRoutes = require("./routes/video");
 const authRoutes = require("./routes/auth");
 const questionRoutes = require("./routes/question");
+const generalRoutes = require("./routes/general");
 const cookieParser = require("cookie-parser");
 
 //db connection
@@ -57,16 +58,17 @@ app.use(cookieParser());
 app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
-app.post('/phoneVerify',async (req,res,next)=>{
-  let num="+91"+req.body.number;
-  client.messages
-  .create({
-     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
-     from: '+18065152334',
-     to: '+919978900829'
-   })
-  .then(message =>res.send(message));
-})
+app.use("/", generalRoutes);
+// app.post('/phoneVerify',async (req,res,next)=>{
+//   let num="+91"+req.body.number;
+//   client.messages
+//   .create({
+//      body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+//      from: '+18065152334',
+//      to: '+919978900829'
+//    })
+//   .then(message =>res.send(message));
+// })
 app.get('/emailVerify/:code',async(req,res,next)=>{
   try{
     let code=req.params.code;
