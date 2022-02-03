@@ -15,7 +15,7 @@ const { textSearch, getVideoById, uploadVideo, deleteVideo, uploadSolution } = r
 const { upload, uploadImage } = require('../helpers/multer_connection'); //Multer upload middleware
 
 //Routes
-router.get('/', (req,res) => {res.sendFile(path.join(__dirname, '..', "/public/upload.html"))}); // Simply redirects to an html page for testing purposes
+router.get('/',auth, (req,res) => {res.sendFile(path.join(__dirname, '..', "/public/upload.html"))}); // Simply redirects to an html page for testing purposes
 router.get('/home',async (req,res) => {
     const data = await Video.find({});
     // console.log(data);
@@ -23,8 +23,8 @@ router.get('/home',async (req,res) => {
 })
 router.get('/solution/:id',(req,res)=>{res.sendFile(path.join(__dirname, '..', "/public/upload2.html"))});
 router.post('/upload',auth,upload.fields([{name:'video',maxCount:1}, {name:'image', maxCount:4},{name:'note',maxCount:3}])/*uploadImage.fields([{name:'image', maxCount:1}])*/,uploadSolution); //Middleware uploads to S3 while controllers update DB
-router.get('/delete/:videoId', deleteVideo);
+// router.get('/delete/:videoId', deleteVideo);
 router.get('/search', textSearch);
-router.get('/:videoId', getVideoById);
+// router.get('/:videoId', getVideoById);
 
 module.exports = router;

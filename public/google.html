@@ -1,0 +1,42 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta http-equiv="X-UA-Compatible" content="IE=edge">
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="464319972305-p81cg2nqfs3atlfhgkis3c805a8rih49.apps.googleusercontent.com">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Google Sign In</title>
+</head>
+<body>
+    <div class="g-signin2" data-onsuccess="onSignIn"></div>
+    <button onclick="signOut()">Signout</button>
+</body>
+<script>
+    // onSignIn();
+    async function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log(id_token);
+        console.log('Email: ' + profile.getEmail());
+        let buffer=await fetch('/google/register',{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({profile,id_token})
+        })
+        let ans=await buffer.json();
+        console.log(ans);
+    }
+    function signOut() {
+        var auth2 = gapi.auth2.getAuthInstance();
+        auth2.signOut().then(function () {
+        console.log('User signed out.');
+    });
+  }
+</script>
+</html>
