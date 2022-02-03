@@ -16,15 +16,6 @@ const questionSchema = new mongoose.Schema({
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'solution'
   }],
-  report:[{
-    reason:{
-      type:String
-    },
-    user:{
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: 'solution'
-    }
-  }],
   tags:[{
       type: mongoose.SchemaTypes.ObjectId,
       ref: 'tag'
