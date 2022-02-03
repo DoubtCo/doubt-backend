@@ -133,7 +133,18 @@ exports.sessionSignIn = (req, res, next) => {
   })(req, res, next);
 };
 
-exports.signOut = (req, res) => {
-  req.logout();
-  res.redirect("/auth/signin");
+exports.signOut =async(req, res,next) => {
+  try {
+    req.user.tokens = req.user.tokens.filter((token) => {
+      return token.token !== req.token;
+    });
+    // let z = schedule.scheduledJobs["job-1"];
+    // if (z) {
+    //   z.cancel();
+    // }
+    await req.user.save();
+    res.send({ status: "done" });
+  } catch (err) {
+    next(err);
+  }
 };

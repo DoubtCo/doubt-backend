@@ -1,7 +1,7 @@
 //Dependencies
 const router = require("express").Router();
 const path = require("path");
-
+const auth=require('../helpers/jwt-config');
 //Controllers
 const {  sessionSignUp,  sessionSignIn,  signOut,  jwtSignUp,  jwtSignIn, verifySignUp} = require("../controllers/auth");
 const { generateVerificationMail, forgetPassword, changePassword } = require("../controllers/account");
@@ -22,5 +22,5 @@ router.post("/changePassword/:code", changePassword);
 
 // router.post("/signup", sessionSignUp);
 // router.post("/signin", sessionSignIn);
-router.get("/signout", signOut);
+router.get("/signout",auth, signOut);
 module.exports = router;

@@ -1,6 +1,8 @@
 <!DOCTYPE html>
 <html lang="en">
   <head>
+    <script src="https://apis.google.com/js/platform.js" async defer></script>
+    <meta name="google-signin-client_id" content="464319972305-p81cg2nqfs3atlfhgkis3c805a8rih49.apps.googleusercontent.com">
     <style>
       form {
         vertical-align: top;
@@ -21,6 +23,53 @@
         <input type="password" name="password" />
         <button type="submit">Login</button>
     </form>
+    <div  id="my-signin2" onclick="renderButton()">Sign In</div>
+    <button onclick="signOut()">Signout</button>
     </div>
   </body>
+  <script>
+    async function onSignIn(googleUser) {
+        var profile = googleUser.getBasicProfile();
+        console.log('ID: ' + profile.getId()); // Do not send to your backend! Use an ID token instead.
+        console.log('Name: ' + profile.getName());
+        console.log('Image URL: ' + profile.getImageUrl());
+        var id_token = googleUser.getAuthResponse().id_token;
+        console.log(id_token);
+        console.log('Email: ' + profile.getEmail());
+        let buffer=await fetch('/google/register',{
+            method:"POST",
+            headers:{
+                "Content-Type":"application/json"
+            },
+            body:JSON.stringify({profile,id_token})
+        })
+        let ans=await buffer.json();
+        console.log(ans);
+    }
+    async function signOut()
+    {
+      let buffer=await fetch('/auth/signout');
+      console.log(await buffer.json());
+      
+    }
+    function onSuccess(googleUser) {
+      console.log('Logged in as: ' + googleUser.getBasicProfile().getName());
+      onSignIn(googleUser);
+    }
+    function onFailure(error) {
+      console.log(error);
+    }
+    function renderButton() {
+      gapi.signin2.render('my-signin2', {
+        'scope': 'profile email',
+        'width': 240,
+        'height': 50,
+        'longtitle': true,
+        'theme': 'dark',
+        'onsuccess': onSuccess,
+        'onfailure': onFailure
+      });
+    }
+  </script>
+  <script src="https://apis.google.com/js/platform.js" async defer></script>
 </html>

@@ -24,6 +24,11 @@ mongoose.connect("" + process.env.MONGODB_URL, {}, () => {
   console.log("Connected to DB");
 });
 
+
+//Model
+const User=require('./models/user');
+
+
 //app
 const app = express();
 
@@ -58,7 +63,56 @@ app.use(cookieParser());
 app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
-app.use("/", generalRoutes);
+
+app.post('/phoneVerify',async (req,res,next)=>{
+  let num="+91"+req.body.number;
+  client.messages
+  .create({
+     body: 'This is the ship that made the Kessel Run in fourteen parsecs?',
+     from: '+18065152334',
+     to: '+919978900829'
+   })
+  .then(message =>res.send(message));
+})
+app.get('/google',async(req,res,next)=>{
+  res.sendFile(path.join(__dirname,"/public/google.html"))
+})
+app.post('/google/register',async(req,res,next)=>{
+  try{
+    console.log(req.body);
+    let user=await User.findOne({email:req.body.profile.tv});
+    if(user)
+    {
+      user.tokens.push({token:req.body.id_token});
+      res.cookie("jwt",req.body.id_token, {
+        expires: new Date(Date.now() + 5000000000),
+        httpOnly: true,
+      });
+      await user.save();
+    }
+    else{
+      let tk=new Array;
+      tk.push({token:req.body.id_token});
+      let user=new User({
+        name:req.body.profile.tf,
+        email:req.body.profile.tv,
+        tokens:tk
+      })
+      res.cookie("jwt",req.body.id_token, {
+        expires: new Date(Date.now() + 5000000000),
+        httpOnly: true,
+      }); 
+      await user.save();
+    }
+    console.log(user);
+    res.send(user);
+  }
+  catch(err){
+    next(err);
+  }
+})
+=======
+
 // app.post('/phoneVerify',async (req,res,next)=>{
 //   let num="+91"+req.body.number;
 //   client.messages
@@ -69,6 +123,8 @@ app.use("/", generalRoutes);
 //    })
 //   .then(message =>res.send(message));
 // })
+
+app.use("/", generalRoutes);
 app.get('/emailVerify/:code',async(req,res,next)=>{
   try{
     let code=req.params.code;

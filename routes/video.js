@@ -17,7 +17,7 @@ const { upload, uploadImage } = require('../helpers/multer_connection'); //Multe
 // const { genWatermark } = require("../helpers/watermark-creator");
 
 //Routes
-router.get('/', (req,res) => {res.sendFile(path.join(__dirname, '..', "/public/upload.html"))}); // Simply redirects to an html page for testing purposes
+router.get('/',auth, (req,res) => {res.sendFile(path.join(__dirname, '..', "/public/upload.html"))}); // Simply redirects to an html page for testing purposes
 router.get('/home',async (req,res) => {
     const data = await Video.find({});
     // console.log(data);
@@ -29,8 +29,9 @@ router.post('/upload',auth,upload.fields([{name:'video',maxCount:1}, {name:'imag
 router.get('/search', textSearch);
 // router.get('/:videoId', getVideoById);
 
-router.post('/report/:solutionId',auth, reportSolution);
-// router.get('/watermark', (req,res) => {res.sendFile(path.join(__dirname,'..','/public/watermark.html'))});
-// router.post('/watermark',genWatermark, (req,res) => {res.send('OK')});
 
+
+
+
+router.post('/report/:solutionId',auth, reportSolution);
 module.exports = router;
