@@ -19,6 +19,11 @@ mongoose.connect("" + process.env.MONGODB_URL, {}, () => {
   console.log("Connected to DB");
 });
 
+
+//Model
+const User=require('./models/user');
+
+
 //app
 const app = express();
 

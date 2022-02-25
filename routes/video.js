@@ -21,4 +21,8 @@ router.get('/:videoId', getVideoById);
 
 router.post('/report/:solutionId',auth, reportSolution);
 
+
+
+
+router.post('/report/:solutionId',auth, reportSolution);
 module.exports = router;
