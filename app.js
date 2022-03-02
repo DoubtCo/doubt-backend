@@ -29,19 +29,21 @@ const Code = require('./models/codes');
 const app = express();
 
 //middleware
-// app.enable('trust proxy');
-// app.use((req, res, next) => {
-//     req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
-// })
 app.use(morgan("dev"));
 app.use(express.json());
 app.use(express.urlencoded({extended: true}));
 app.use(cors());
 
+// app.enable('trust proxy');
+// app.use((req, res, next) => {
+//     req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
+// })
+
 //routes middleware
 app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
+app.use("/", generalRoutes); // This must be at the bottom only
 
 app.get('/google',async(req,res,next)=>{
   res.sendFile(path.join(__dirname,"/public/google.html"))
@@ -103,13 +105,14 @@ app.get('/emailVerify/:code',async(req,res,next)=>{
 })
 
 //Error Handler
+
 app.use(function (err, req, res, next) {
   res.status(err.status||500).send({status:err.status||500,error:err.message});
 })
 
 //port
 const port = process.env.PORT || 5000;
-app.listen(5001, () => console.log(`Listening on port ${5001}`));
+app.listen(5001, () => console.log(`Listening on port 5001`));
 
 // const secureServer = https.createServer({
 //   key: fs.readFileSync(path.join(__dirname, './cert/key.pem')),
