@@ -80,7 +80,6 @@ exports.verifySignUp = async (req, res, next) => {
 exports.jwtSignIn = async (req, res, next) => {
   try {
     const body = req.body;
-    console.log(req.body);
 
     const user = await User.findOne({
       email: body.email,

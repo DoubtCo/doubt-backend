@@ -4,7 +4,6 @@ const Question = require("../models/question");
 const Note = require("../models/notes");
 const Image = require("../models/image");
 const { s3 } = require("../helpers/s3_config");
-const question = require("../models/question");
 
 //Controller to delete video from S3 first and then from DB
 // exports.deleteVideo = async (req, res) => {

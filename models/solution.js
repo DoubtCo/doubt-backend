@@ -1,10 +1,6 @@
 const mongoose = require('mongoose');
 
 let solutionSchema=new mongoose.Schema({
-    title:{
-        type:String,
-        required:true
-    },
     description:{
         type:String
     },
@@ -28,10 +24,6 @@ let solutionSchema=new mongoose.Schema({
           type: mongoose.SchemaTypes.ObjectId,
           ref: 'solution'
         }
-    }],
-    tags:[{
-        type:mongoose.SchemaTypes.ObjectId,
-        ref:'tag'
     }],
     createdBy:{
         type:mongoose.SchemaTypes.ObjectId,
