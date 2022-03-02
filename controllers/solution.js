@@ -1,13 +1,54 @@
+//DB Models
 const Solution = require("../models/solution");
 const Question = require("../models/question");
 const Video = require("../models/video");
 const Image = require("../models/image");
 const Note = require("../models/notes");
 
+//Dependencies
 const sendMail = require("../helpers/send_mail");
 const { s3 } = require("../helpers/s3_config");
-const { model } = require("mongoose");
 
+//Helper Functions
+deleteObjectName = async (objectName, model, objectId) => {
+  const object = await model.findById(objectId);
+  if (object) {
+    const params = { Bucket: object.Bucket, Key: object.Key };
+
+    s3.deleteObject(params, (err) => {
+      if (err) {
+        console.log(err);
+      }
+    })
+      .promise()
+      .then(
+        model.findByIdAndDelete(objectId, () => {
+          console.log(`${objectName} deleted`);
+        })
+      );
+  }
+};
+
+deleteSolution = async (solutionId) => {
+  let solution = await Solution.findById(solutionId);
+  if (solution) {
+    const { video: videoId, image: imageIdArray, note: noteIdArray } = solution;
+
+    deleteObjectName("video", Video, videoId);
+
+    imageIdArray.forEach((imageId) => {
+      deleteObjectName("image", Image, imageId);
+    });
+    
+    noteIdArray.forEach((noteId) => {
+      deleteObjectName("note", Note, noteId);
+    });
+    
+    await Solution.findByIdAndDelete(solutionId);
+  }
+};
+
+//Export Functions
 exports.reportSolution = async (req, res) => {
   try {
     let sol = await Solution.findById(req.params.solutionId);
@@ -95,43 +136,6 @@ exports.uploadSolution = async (req, res) => {
   }
 };
 
-deleteObjectName = async (objectName, model, objectId) => {
-  const object = await model.findById(objectId);
-  if (object) {
-    const params = { Bucket: object.Bucket, Key: object.Key };
-
-    s3.deleteObject(params, (err) => {
-      if (err) {
-        console.log(err);
-      }
-    })
-      .promise()
-      .then(
-        model.findByIdAndDelete(objectId, () => {
-          console.log(`${objectName} deleted`);
-        })
-      );
-  }
-};
-
-deleteSolution = async (solutionId) => {
-  let solution = await Solution.findById(solutionId);
-  if (solution) {
-    const { video: videoId, image: imageIdArray, note: noteIdArray } = solution;
-
-    deleteObjectName("video", Video, videoId);
-
-    imageIdArray.forEach((imageId) => {
-      deleteObjectName("image", Image, imageId);
-    });
-
-    noteIdArray.forEach((noteId) => {
-      deleteObjectName("note", Note, noteId);
-    });
-
-    await Solution.findByIdAndDelete(solutionId);
-  }
-};
 
 exports.deleteQuestion = async (req, res) => {
   try {

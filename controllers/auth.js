@@ -23,8 +23,6 @@ exports.sessionSignUp = (req, res) => {
 
 exports.jwtSignUp = async (req, res, next) => {
   try {
-    console.log(req.body);
-    console.log(req.data);
     const saltHash = encryptPassword(req.body.password);
 
     const salt = saltHash.salt;
@@ -38,10 +36,12 @@ exports.jwtSignUp = async (req, res, next) => {
     });
 
     let token = await user.createAuthToken();
+
     res.cookie("jwt", token, {
       expires: new Date(Date.now() + 5000000000),
       httpOnly: true,
     });
+
     next();
   } catch (err) {
     next(err);
@@ -50,16 +50,15 @@ exports.jwtSignUp = async (req, res, next) => {
 
 exports.verifySignUp = async (req, res, next) => {
   try {
-    let code = req.params.code;
-    console.log(code);
-    let codeModel = await Code.findOne({ code });
-    let email = codeModel.email;
-    console.log(email);
+    const code = req.params.code;
+    const codeModel = await Code.findOne({ code });
+    const email = codeModel.email;
+    
     if (!code) {
       res.send("Check link");
     }
     if (email) {
-      let user = await User.findOne({ email: email });
+      const user = await User.findOne({ email: email });
 
       if (user.activationStatus !== "active") {
         user.activationStatus = "active";
@@ -67,7 +66,7 @@ exports.verifySignUp = async (req, res, next) => {
       }
       await Code.findByIdAndDelete(codeModel._id);
       res.send(
-        "<h1>User Active</h1> <a href='http://localhost:5000/auth/signin'>Sign In</a>"
+        "<h1>User Active</h1> <a href='http://localhost:5001/auth/signin'>Sign In</a>"
       );
     } else {
       res.send("No account with this mail found.");
@@ -89,7 +88,6 @@ exports.jwtSignIn = async (req, res, next) => {
     const hash = user.hash;
 
     const found = validatePassword(body.password, salt, hash);
-    console.log(found);
 
     if (found) {
       if (user.activationStatus === "active") {

@@ -43,7 +43,6 @@ app.use(cors());
 app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
-app.use("/", generalRoutes); // This must be at the bottom only
 
 app.get('/google',async(req,res,next)=>{
   res.sendFile(path.join(__dirname,"/public/google.html"))
@@ -67,6 +66,7 @@ app.post('/google/register',async(req,res,next)=>{
       let user=new User({
         name:req.body.profile.tf,
         email:req.body.profile.tv,
+        activationStatus: 'active',
         tokens:tk
       })
       res.cookie("jwt",req.body.id_token, {
@@ -83,26 +83,7 @@ app.post('/google/register',async(req,res,next)=>{
   }
 })
 
-app.use("/", generalRoutes);
-app.get('/emailVerify/:code',async(req,res,next)=>{
-  try{
-    let code=req.params.code;
-    let found=await Code.findOne({code});
-    let status;
-    if(found)
-    {
-      status="Done";
-    }
-    else{
-      status="Fail";
-    }
-    res.send(status);
-  }
-  catch(err)
-  {
-    next(err);
-  }
-})
+app.use("/", generalRoutes); //ALWAYS AT BOTTOM OF ROUTES
 
 //Error Handler
 
