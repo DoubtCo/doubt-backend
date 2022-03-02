@@ -2,35 +2,18 @@ const mongoose = require('mongoose');
 
 //Schema for videos
 const videoSchema = new mongoose.Schema({
-    // videoId: {
-    //     type: String,
-    //     required: true,
-    //     unique: true
-    // },
-    videoBucket: {
+    Key: {
+        type: String,
+        required: true,
+    },
+    Bucket: {
         type: String,
         required: true
     },
-    videoURL: {
+    URL: {
         type: String,
         required: true
     },
-    // videoTitle: {
-    //     type: String,
-    //     required: true
-    // }
-    // uploadedBy: {
-    //     type: mongoose.SchemaTypes.ObjectId,
-    //     ref: 'user'
-    // },
-    // comments: [{
-    //     type:mongoose.SchemaTypes.ObjectId,
-    //     ref: 'comment'
-    // }],
-    thumbnail:{
-        type: String
-    }
 }, {timestamps: true});
-
 
 module.exports = mongoose.model('Video', videoSchema);

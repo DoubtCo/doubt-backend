@@ -22,6 +22,7 @@ mongoose.connect("" + process.env.MONGODB_URL, {}, () => {
 
 //Model
 const User=require('./models/user');
+const Code = require('./models/codes');
 
 
 //app
@@ -38,14 +39,54 @@ app.use(cors());
 //     req.secure ? next() : res.redirect('https://' + req.headers.host + req.url)
 // })
 
-
 //routes middleware
 app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
-app.use("/", generalRoutes); // This must be at the bottom only
 
-//error handler
+app.get('/google',async(req,res,next)=>{
+  res.sendFile(path.join(__dirname,"/public/google.html"))
+})
+app.post('/google/register',async(req,res,next)=>{
+  try{
+    console.log(req.body);
+    let user=await User.findOne({email:req.body.profile.tv});
+    if(user)
+    {
+      user.tokens.push({token:req.body.id_token});
+      res.cookie("jwt",req.body.id_token, {
+        expires: new Date(Date.now() + 5000000000),
+        httpOnly: true,
+      });
+      await user.save();
+    }
+    else{
+      let tk=new Array;
+      tk.push({token:req.body.id_token});
+      let user=new User({
+        name:req.body.profile.tf,
+        email:req.body.profile.tv,
+        activationStatus: 'active',
+        tokens:tk
+      })
+      res.cookie("jwt",req.body.id_token, {
+        expires: new Date(Date.now() + 5000000000),
+        httpOnly: true,
+      }); 
+      await user.save();
+    }
+    console.log(user);
+    res.send(user);
+  }
+  catch(err){
+    next(err);
+  }
+})
+
+app.use("/", generalRoutes); //ALWAYS AT BOTTOM OF ROUTES
+
+//Error Handler
+
 app.use(function (err, req, res, next) {
   res.status(err.status||500).send({status:err.status||500,error:err.message});
 })

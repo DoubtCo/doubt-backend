@@ -15,9 +15,8 @@ exports.upload = multer({
             cb(null, {fieldName: file.fieldname})
         },
         key: (req, file, cb) => {
-            const title = req.body.title;
             const ext = path.extname(file.originalname);
-            cb(null, `${title}-${uuid()}${ext}`);    //Generates Unique name for Video
+            cb(null, `${uuid()}${ext}`);    //Generates Unique name for Video
         }
     })
 })
