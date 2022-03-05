@@ -13,17 +13,17 @@ const videoRoutes = require("./routes/video");
 const authRoutes = require("./routes/auth");
 const questionRoutes = require("./routes/question");
 const generalRoutes = require("./routes/general");
+const userRoutes = require("./routes/user");
 
 //db connection
 mongoose.connect("" + process.env.MONGODB_URL, {}, () => {
   console.log("Connected to DB");
 });
 
-
 //Model
-const User=require('./models/user');
-const Code = require('./models/codes');
-
+const User = require("./models/user");
+const Code = require("./models/codes");
+const cookieParser = require("cookie-parser");
 
 //app
 const app = express();
@@ -31,8 +31,9 @@ const app = express();
 //middleware
 app.use(morgan("dev"));
 app.use(express.json());
-app.use(express.urlencoded({extended: true}));
+app.use(express.urlencoded({ extended: true }));
 app.use(cors());
+app.use(cookieParser());
 
 // app.enable('trust proxy');
 // app.use((req, res, next) => {
@@ -43,53 +44,53 @@ app.use(cors());
 app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
+app.use("/user", userRoutes);
 
-app.get('/google',async(req,res,next)=>{
-  res.sendFile(path.join(__dirname,"/public/google.html"))
-})
-app.post('/google/register',async(req,res,next)=>{
-  try{
+app.get("/google", async (req, res, next) => {
+  res.sendFile(path.join(__dirname, "/public/google.html"));
+});
+app.post("/google/register", async (req, res, next) => {
+  try {
     console.log(req.body);
-    let user=await User.findOne({email:req.body.profile.tv});
-    if(user)
-    {
-      user.tokens.push({token:req.body.id_token});
-      res.cookie("jwt",req.body.id_token, {
+    let user = await User.findOne({ email: req.body.profile.tv });
+    if (user) {
+      user.tokens.push({ token: req.body.id_token });
+      res.cookie("jwt", req.body.id_token, {
+        expires: new Date(Date.now() + 5000000000),
+        httpOnly: true,
+      });
+      await user.save();
+    } else {
+      let tk = new Array();
+      tk.push({ token: req.body.id_token });
+      let user = new User({
+        name: req.body.profile.tf,
+        email: req.body.profile.tv,
+        activationStatus: "active",
+        tokens: tk,
+      });
+      res.cookie("jwt", req.body.id_token, {
         expires: new Date(Date.now() + 5000000000),
         httpOnly: true,
       });
       await user.save();
     }
-    else{
-      let tk=new Array;
-      tk.push({token:req.body.id_token});
-      let user=new User({
-        name:req.body.profile.tf,
-        email:req.body.profile.tv,
-        activationStatus: 'active',
-        tokens:tk
-      })
-      res.cookie("jwt",req.body.id_token, {
-        expires: new Date(Date.now() + 5000000000),
-        httpOnly: true,
-      }); 
-      await user.save();
-    }
     console.log(user);
     res.send(user);
-  }
-  catch(err){
+  } catch (err) {
     next(err);
   }
-})
+});
 
 app.use("/", generalRoutes); //ALWAYS AT BOTTOM OF ROUTES
 
 //Error Handler
 
 app.use(function (err, req, res, next) {
-  res.status(err.status||500).send({status:err.status||500,error:err.message});
-})
+  res
+    .status(err.status || 500)
+    .send({ status: err.status || 500, error: err.message });
+});
 
 //port
 const port = process.env.PORT || 5000;

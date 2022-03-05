@@ -1,6 +1,6 @@
 //Dependencies
 const uuid = require("uuid").v4;
-const sendMail = require('../helpers/send_mail');
+const sendMail = require("../helpers/send_mail");
 
 //DB Models
 const Code = require("../models/codes");
@@ -14,11 +14,11 @@ exports.generateVerificationMail = async (req, res, next) => {
 
     await sendMail(
       email,
-      'Please Activate Your Doubt Account',
-      `Click on the link below to activate your account - https://localhost:5001/auth/signup/${ucode}`
+      "Please Activate Your Doubt Account",
+      `Click on the link below to activate your account - http://localhost:3000/register/${ucode}`
     );
-    
-    const code = new Code({ code: ucode, email, codeType: 'verify'});
+
+    const code = new Code({ code: ucode, email, codeType: "verify" });
 
     setTimeout(async () => {
       await Code.findByIdAndDelete(code._id);
@@ -34,7 +34,7 @@ exports.verifyEmail = async (req, res, next) => {
   try {
     const code = req.params.code;
     const found = await Code.findOne({ code });
-    const status;
+    var status;
 
     if (found) {
       status = "Done";
@@ -53,13 +53,17 @@ exports.forgetPassword = async (req, res, next) => {
     const code = uuid();
     const found = await User.findOne({ email: req.body.email });
 
-    if (found){
-      const Pcode = new Code({ code, email: req.body.email, codeType:'forget' });
+    if (found) {
+      const Pcode = new Code({
+        code,
+        email: req.body.email,
+        codeType: "forget",
+      });
       await Pcode.save();
 
       sendMail(
         req.body.email,
-        'Password Changed',
+        "Password Changed",
         `Please follow this link to reset your password - https://localhost:5001/auth/changePassword/${code}`
       );
 
@@ -74,7 +78,7 @@ exports.forgetPassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};
 
 exports.changePassword = async (req, res, next) => {
   try {
@@ -89,4 +93,4 @@ exports.changePassword = async (req, res, next) => {
   } catch (err) {
     next(err);
   }
-}
+};

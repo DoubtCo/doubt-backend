@@ -2,7 +2,10 @@ const User = require("../models/user");
 const Code = require("../models/codes");
 const passport = require("passport");
 
-const {  encryptPassword,  validatePassword } = require("../helpers/password_methods");
+const {
+  encryptPassword,
+  validatePassword,
+} = require("../helpers/password_methods");
 
 exports.sessionSignUp = (req, res) => {
   const saltHash = encryptPassword(req.body.password);
@@ -53,7 +56,7 @@ exports.verifySignUp = async (req, res, next) => {
     const code = req.params.code;
     const codeModel = await Code.findOne({ code });
     const email = codeModel.email;
-    
+
     if (!code) {
       res.send("Check link");
     }
@@ -130,7 +133,7 @@ exports.sessionSignIn = (req, res, next) => {
   })(req, res, next);
 };
 
-exports.signOut =async(req, res,next) => {
+exports.signOut = async (req, res, next) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => {
       return token.token !== req.token;

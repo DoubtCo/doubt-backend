@@ -6,18 +6,22 @@ const path = require("path");
 const Question = require("../models/question");
 
 //Controllers and Helpers
-const { askQuestion, listQuestions } = require("../controllers/question");
+const {
+  askQuestion,
+  listQuestions,
+  questionDetails,
+} = require("../controllers/question");
 const { upload } = require("../helpers/multer_connection");
 const { uploadSolution, deleteQuestion } = require("../controllers/solution");
 const auth = require("../helpers/jwt-config");
 const { isAuth } = require("../helpers/auth_middleware");
-const { tagGenerator } = require("../helpers/tag_generator");
+const { tagGen } = require("../helpers/tag_generator");
 
 //Routes
 router.get("/ask", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "/public/question.html"));
 });
-router.post("/ask", askQuestion);
+router.post("/ask", tagGen, askQuestion);
 router.get("/list", listQuestions);
 router.get("/listQuestions", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "/public/questionDisplay.html"));
@@ -29,6 +33,8 @@ router.post("/getQuestionTitle", async (req, res) => {
   let question = await Question.findById(id);
   res.json({ title: question.questionTitle });
 });
+
+router.get("/list/:id", questionDetails);
 
 router.post(
   "/:questionID/answer",
