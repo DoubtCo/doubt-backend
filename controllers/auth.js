@@ -99,6 +99,7 @@ exports.jwtSignIn = async (req, res, next) => {
           expires: new Date(Date.now() + 5000000000),
           httpOnly: true,
         });
+
         res.send({ status: "done" });
       } else if (user.activationStatus !== "active") {
         throw new Error("Please verify account through mail.");
@@ -133,17 +134,16 @@ exports.sessionSignIn = (req, res, next) => {
   })(req, res, next);
 };
 
-exports.signOut = async (req, res, next) => {
+exports.jwtSignOut = async (req, res, next) => {
   try {
     req.user.tokens = req.user.tokens.filter((token) => {
       return token.token !== req.token;
     });
-    // let z = schedule.scheduledJobs["job-1"];
-    // if (z) {
-    //   z.cancel();
-    // }
+    
     await req.user.save();
-    res.send({ status: "done" });
+    
+    res.cookie("jwt", '', {maxAge: 1});
+    res.send({ status: "Signed Out" });
   } catch (err) {
     next(err);
   }

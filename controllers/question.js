@@ -17,38 +17,44 @@ exports.askQuestion = async (req, res, next) => {
 };
 
 exports.listQuestions = async (req, res) => {
-  Question.find(
-    { answerStatus: false },
-    { _id: 1, questionTitle: 1, questionDesc: 1, tags: 1 },
-    function (err, docs) {
+  await Question.find()
+    .select("_id questionTitle questionDesc tags solutionId")
+    .populate("tags")
+    .exec()
+    .then((questions, err) => {
+      const sendQues = questions.map((question) => {
+        const questionObj = {
+          ...question._doc,
+          solutionCount: question.solutionCount,
+        };
+        return questionObj;
+      });
+      console.log(sendQues);
       if (err) {
         res.json({ error: err });
       } else {
-        res.send(docs);
+        res.send(sendQues);
       }
-    }
-  );
-
-  // await Question.find()
-  //   .select("_id questionTitle questionDesc tags")
-  // .exec()
-  // .then((err, questions) => {
-  //   console.log(questions);
-  //   if (err) {
-  //     res.json({ error: err });
-  //   } else {
-  //     res.send(questions);
-  //   }
-  // });
+    });
 };
 
 exports.questionDetails = async (req, res) => {
-  let question = await Question.findById(req.params.id);
+  // let question = await Question.findById(req.params.id);
 
-  if (!question) {
-    res.send("not found");
-  }
-  res.send(question);
+  // if (!question) {
+  //   res.send("not found");
+  // }
+  // res.send(question);
 
-  console.log(question);
+  await Question.findOne({ _id: req.params.id })
+    .populate("solutionId tags")
+    .exec()
+    .then((questions, err) => {
+      console.log(questions);
+      if (err) {
+        res.send(err);
+      } else {
+        res.send(questions);
+      }
+    });
 };

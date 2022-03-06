@@ -1,5 +1,10 @@
 const User = require("../models/user");
 
+const {
+  encryptPassword,
+  validatePassword,
+} = require("../helpers/password_methods");
+
 const { createAvatar } = require("@dicebear/avatars");
 const style = require("@dicebear/avatars-bottts-sprites");
 
@@ -17,4 +22,32 @@ exports.viewUser = async (req, res, next) => {
       }
     }
   );
+};
+
+exports.editProfile = async (req, res) => {
+  if (req.params.field == "password") {
+    const oldPassword = req.params.oldPassword;
+    const newPassword = req.params.newPassword;
+
+    const user = req.user;
+    if (validatePassword(oldPassword, user.salt, user.hash)) {
+      const { salt, hash } = encryptPassword(newPassword);
+
+      User.findOne({ _id: req.user._id }, async (foundUser, err) => {
+        if (foundUser) {
+          foundUser.salt = salt;
+          foundUser.hash = hash;
+
+          await foundUser.save();
+          res.send("Password Changed");
+        } else if (err) {
+          res.send(err);
+        } else {
+          res.send("User not found");
+        }
+      });
+    } else {
+      res.send({ message: "Wrong Password Entered" });
+    }
+  }
 };

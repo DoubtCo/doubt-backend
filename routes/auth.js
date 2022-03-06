@@ -6,7 +6,7 @@ const auth = require("../helpers/jwt-config");
 const {
   sessionSignUp,
   sessionSignIn,
-  signOut,
+  jwtSignOut,
   jwtSignUp,
   jwtSignIn,
   verifySignUp,
@@ -41,5 +41,6 @@ router.post("/changePassword/:code", changePassword);
 
 // router.post("/signup", sessionSignUp);
 // router.post("/signin", sessionSignIn);
-router.get("/signout", auth, signOut);
+
+router.get("/signout", auth, jwtSignOut);
 module.exports = router;

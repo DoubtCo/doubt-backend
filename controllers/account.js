@@ -34,13 +34,11 @@ exports.verifyEmail = async (req, res, next) => {
   try {
     const code = req.params.code;
     const found = await Code.findOne({ code });
-    var status;
 
     if (found) {
-      status = "Done";
+      res.send({ status: "Verified" });
       next();
     } else {
-      status = "Fail";
       res.redirect("/auth/signup");
     }
   } catch (err) {
@@ -50,8 +48,10 @@ exports.verifyEmail = async (req, res, next) => {
 
 exports.forgetPassword = async (req, res, next) => {
   try {
+    console.log("Here");
     const code = uuid();
     const found = await User.findOne({ email: req.body.email });
+    console.log(req.body.email);
 
     if (found) {
       const Pcode = new Code({
@@ -64,7 +64,7 @@ exports.forgetPassword = async (req, res, next) => {
       sendMail(
         req.body.email,
         "Password Changed",
-        `Please follow this link to reset your password - https://localhost:5001/auth/changePassword/${code}`
+        `Please follow this link to reset your password - http://localhost:3000/change-password/${code}`
       );
 
       setTimeout(async () => {
@@ -82,9 +82,9 @@ exports.forgetPassword = async (req, res, next) => {
 
 exports.changePassword = async (req, res, next) => {
   try {
+    const code = await Code.findOne({ code: req.params.code });
     const email = code.email;
     const user = await User.findOne({ email: email });
-    const code = await Code.findOne({ code: req.params.code });
 
     user.password = req.body.password;
     await user.save();

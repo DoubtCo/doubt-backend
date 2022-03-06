@@ -10,16 +10,30 @@ const questionSchema = new mongoose.Schema({
   },
   askedBy: {
     type: mongoose.SchemaTypes.ObjectId,
-    ref: 'user'
+    ref: "user",
   },
-  solutionId: [{
+  solutionId: [
+    {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'solution'
-  }],
-  tags:[{
+      ref: "solution",
+    },
+  ],
+  tags: [
+    {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: 'tag'
-  }]
+      ref: "tag",
+    },
+  ],
 });
 
-module.exports = new mongoose.model('Question', questionSchema);
+questionSchema.virtual("solutionCount").get(function () {
+  let solutionCount;
+  if (this.solutionId) {
+    solutionCount = this.solutionId.length;
+  } else {
+    solutionCount = 0;
+  }
+  return solutionCount;
+});
+
+module.exports = new mongoose.model("Question", questionSchema);

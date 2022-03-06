@@ -1,18 +1,16 @@
-const mongoose = require('mongoose');
-// const findOrCreate = require('mongoose-find-or-create');
+const mongoose = require("mongoose");
 
 const codeSchema = new mongoose.Schema({
-    code:{
-        type:String,
-    },
-    email:{
-        type:String
-    },
-    codeType:{
-        type:String,
-        enum:['verify', 'forget']
-    }
-})
-// tagSchema.plugin(findOrCreate, {appendToArray: true})
+  code: {
+    type: String,
+  },
+  email: {
+    type: String,
+  },
+  codeType: {
+    type: String,
+    enum: ["verify", "forget"],
+  },
+});
 
-module.exports = new mongoose.model('code', codeSchema)
+module.exports = new mongoose.model("code", codeSchema);
