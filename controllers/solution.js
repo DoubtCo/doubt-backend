@@ -121,7 +121,7 @@ exports.uploadSolution = async (req, res) => {
       video: videoID,
       image: imagesArray,
       note: notesArray,
-      // createdBy: req.user._id
+      createdBy: req.user._id
     });
     await solution.save();
 

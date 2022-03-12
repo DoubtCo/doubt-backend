@@ -21,7 +21,7 @@ const { tagGen } = require("../helpers/tag_generator");
 router.get("/ask", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "/public/question.html"));
 });
-router.post("/ask", tagGen, askQuestion);
+router.post("/ask", auth, tagGen, askQuestion);
 router.get("/list", listQuestions);
 router.get("/listQuestions", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "/public/questionDisplay.html"));

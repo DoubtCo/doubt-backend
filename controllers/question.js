@@ -5,7 +5,7 @@ exports.askQuestion = async (req, res, next) => {
     const newQuestion = new Question({
       questionTitle: req.body.questionTitle,
       questionDesc: req.body.questionDesc,
-      //   askedBy: req.user._id,
+      askedBy: req.user._id,
       tags: req.tagsArray,
     });
 
@@ -47,7 +47,7 @@ exports.questionDetails = async (req, res) => {
   // res.send(question);
 
   await Question.findOne({ _id: req.params.id })
-    .populate("solutionId tags")
+    .populate("solutionId tags askedBy")
     .exec()
     .then((questions, err) => {
       console.log(questions);
