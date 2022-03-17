@@ -21,7 +21,7 @@ const userSchema = new mongoose.Schema({
         type: String,
         trim: true
     },
-    role:{              //0 for user, 1 for admin
+    role:{              //0 for user, 1 for admin, 2 for assignmentUpload
         type: Number,
         default:0
     },
@@ -37,7 +37,28 @@ const userSchema = new mongoose.Schema({
             type:String,
             required:true
         }
-    }]
+    }],
+    questionUploads:[{
+        type:mongoose.SchemaTypes.ObjectId,
+        ref:'question'
+    }],
+    solutionUploads:[
+        {
+            type:mongoose.SchemaTypes.ObjectId,
+            ref:'solution'
+        }
+    ],
+    favorites:{
+        solutions:[{
+            type:mongoose.SchemaTypes.ObjectId,
+            ref:'solution'
+        }],
+        questions:[{
+            type:mongoose.SchemaTypes.ObjectId,
+            ref:'question'
+        }]
+    },
+
 }, {timestamps: true});
 
 userSchema.methods.createAuthToken=async function(){

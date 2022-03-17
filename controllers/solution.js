@@ -4,6 +4,7 @@ const Question = require("../models/question");
 const Video = require("../models/video");
 const Image = require("../models/image");
 const Note = require("../models/notes");
+const User=require('../models/user');
 
 //Dependencies
 const sendMail = require("../helpers/send_mail");
@@ -76,8 +77,10 @@ exports.reportSolution = async (req, res) => {
 
 exports.uploadSolution = async (req, res) => {
   try {
-    let [vid] = req.files.video || undefined;
+    let vid = req.files.video || undefined;
+    console.log(vid);
     let videoID = undefined;
+    console.log('hello');
     if (vid) {
       let newVideo = new Video({
         Key: vid.key,
@@ -115,14 +118,19 @@ exports.uploadSolution = async (req, res) => {
         await newNote.save();
       });
     }
-
+   
     let solution = new Solution({
+      type: 'answer',
       description: req.body.description || undefined,
       video: videoID,
       image: imagesArray,
       note: notesArray,
       createdBy: req.user._id
     });
+    console.log(solution);
+    let currentUser = await User.findById(req.user._id);
+    currentUser.solutionUploads.push(solution._id);
+    await currentUser.save();
     await solution.save();
 
     let question = await Question.findById(req.params.questionID);

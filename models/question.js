@@ -24,6 +24,10 @@ const questionSchema = new mongoose.Schema({
       ref: "tag",
     },
   ],
+  image: [{
+    type: mongoose.SchemaTypes.ObjectId,
+    ref: 'image'
+  }],
 });
 
 questionSchema.virtual("solutionCount").get(function () {
@@ -36,4 +40,4 @@ questionSchema.virtual("solutionCount").get(function () {
   return solutionCount;
 });
 
-module.exports = new mongoose.model("Question", questionSchema);
+module.exports = new mongoose.model("question", questionSchema);

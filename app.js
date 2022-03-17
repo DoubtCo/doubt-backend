@@ -1,12 +1,25 @@
 //import modules
-require("dotenv").config();
-const express = require("express");
-const mongoose = require("mongoose");
-const morgan = require("morgan");
-const cors = require("cors");
-const path = require("path");
-const fs = require("fs");
-const https = require("https");
+
+const cluster=require('cluster');
+const os=require('os');
+
+if(cluster.isMaster)
+{
+  const n_cpus=os.cpus().length;
+  for(var i=0;i<n_cpus;i++)
+  {
+    cluster.fork();
+  }
+}
+else{
+  require("dotenv").config();
+  const express = require("express");
+  const mongoose = require("mongoose");
+  const morgan = require("morgan");
+  const cors = require("cors");
+  const path = require("path");
+  const fs = require("fs");
+  const https = require("https");
 
 //import routes
 const videoRoutes = require("./routes/video");
@@ -14,6 +27,7 @@ const authRoutes = require("./routes/auth");
 const questionRoutes = require("./routes/question");
 const generalRoutes = require("./routes/general");
 const userRoutes = require("./routes/user");
+const assignmentRoutes = require("./routes/assignment");
 
 //db connection
 mongoose.connect("" + process.env.MONGODB_URL, {}, () => {
@@ -45,6 +59,7 @@ app.use("/video", videoRoutes);
 app.use("/auth", authRoutes);
 app.use("/question", questionRoutes);
 app.use("/user", userRoutes);
+app.use("/assignment", assignmentRoutes);
 
 app.get("/google", async (req, res, next) => {
   res.sendFile(path.join(__dirname, "/public/google.html"));
@@ -102,3 +117,4 @@ app.listen(5001, () => console.log(`Listening on port 5001`));
 // }, app);
 
 // secureServer.listen(port, () => console.log(`Secure server 🚀🔑 on port ${port}`))
+}
