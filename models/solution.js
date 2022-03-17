@@ -32,6 +32,10 @@ let solutionSchema=new mongoose.Schema({
     view:{
         type:Number,
         default:0
+    },
+    type:{
+        type:String,
+        enum: ['answer', 'assignment']
     }
 },{timestamps:true});
 

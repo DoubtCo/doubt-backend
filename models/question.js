@@ -36,4 +36,4 @@ questionSchema.virtual("solutionCount").get(function () {
   return solutionCount;
 });
 
-module.exports = new mongoose.model("Question", questionSchema);
+module.exports = new mongoose.model("question", questionSchema);

@@ -1,14 +1,18 @@
+const question = require("../models/question");
 const Question = require("../models/question");
-
+const User=require("../models/user");
 exports.askQuestion = async (req, res, next) => {
   try {
+    console.log(req.body);
     const newQuestion = new Question({
       questionTitle: req.body.questionTitle,
       questionDesc: req.body.questionDesc,
       askedBy: req.user._id,
       tags: req.tagsArray,
     });
-
+    let currentUser = await User.findById(req.user._id);
+    currentUser.questionUploads.push(newQuestion._id);
+    await currentUser.save();
     newQuestion.save();
     res.send("Question Submitted Successfully.");
   } catch (err) {
