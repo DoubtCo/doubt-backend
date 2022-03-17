@@ -51,3 +51,21 @@ exports.editProfile = async (req, res) => {
     }
   }
 };
+
+exports.toggleFavorite = async (req, res) => {
+  try {
+    const foundUser = await User.findById(req.user._id);
+    favoriteArray = foundUser.favorites;
+    const index = favoriteArray.indexOf(req.params.solutionId);
+
+    if (index == -1) {
+      favoriteArray.push(req.params.solutionId);
+    } else {
+      favoriteArray.splice(index, 1);
+    }
+    await foundUser.save();
+    res.send("Done");
+  } catch (error) {
+    res.send(error)
+  }
+}
