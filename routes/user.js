@@ -9,7 +9,7 @@ router.get("/", auth, (req, res) => {
 
 router.get("/:userid", viewUser);
 router.post("/edit/:field",auth, editProfile);
-router.post("/favorite/:solutionId", auth, toggleFavorite);
+router.post("/favorite/:objectId", auth, toggleFavorite);
 router.post("/create");
 
 module.exports = router;

@@ -48,10 +48,17 @@ const userSchema = new mongoose.Schema({
             ref:'solution'
         }
     ],
-    favorites:[{
-        type:mongoose.SchemaTypes.ObjectId,
-        ref:'solution'
-    }]
+    favorites:{
+        solutions:[{
+            type:mongoose.SchemaTypes.ObjectId,
+            ref:'solution'
+        }],
+        questions:[{
+            type:mongoose.SchemaTypes.ObjectId,
+            ref:'question'
+        }]
+    },
+
 }, {timestamps: true});
 
 userSchema.methods.createAuthToken=async function(){
