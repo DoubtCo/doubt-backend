@@ -30,7 +30,12 @@ const questionSchema = new mongoose.Schema({
   }],
   ips:[
     {
-      type:String
+      ip:{
+        type:String
+      },
+      count:{
+        type:Number
+      }
     }
   ],
   views:{

@@ -1,52 +1,57 @@
 const mongoose = require('mongoose');
 
-let solutionSchema=new mongoose.Schema({
-    description:{
-        type:String
+let solutionSchema = new mongoose.Schema({
+    description: {
+        type: String
     },
-    video:{
-        type:mongoose.SchemaTypes.ObjectId,
-        ref:'video'
+    video: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'video'
     },
-    image:[{
-        type:mongoose.SchemaTypes.ObjectId,
-        ref:'image'
+    image: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'image'
     }],
-    note:[{
-        type:mongoose.SchemaTypes.ObjectId,
-        ref:'note'
+    note: [{
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'note'
     }],
-    report:[{
-        reason:{
-          type:String
+    report: [{
+        reason: {
+            type: String
         },
-        user:{
-          type: mongoose.SchemaTypes.ObjectId,
-          ref: 'solution'
+        user: {
+            type: mongoose.SchemaTypes.ObjectId,
+            ref: 'solution'
         }
     }],
-    createdBy:{
-        type:mongoose.SchemaTypes.ObjectId,
-        ref:'user'
+    createdBy: {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: 'user'
     },
-    view:{
-        type:Number,
-        default:0
+    view: {
+        type: Number,
+        default: 0
     },
-    type:{
-        type:String,
+    type: {
+        type: String,
         enum: ['answer', 'assignment']
     },
-    ips:[
+    ips: [
         {
-          type:String
+            ip: {
+                type: String
+            },
+            count: {
+                type: Number
+            }
         }
-      ],
-    views:{
-        type:Number,
-        default:0
+    ],
+    views: {
+        type: Number,
+        default: 0
     }
-},{timestamps:true});
+}, { timestamps: true });
 
 solutionSchema.virtual('reportCount').get(function () {
     return this.report.length

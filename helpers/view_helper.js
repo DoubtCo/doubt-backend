@@ -1,32 +1,44 @@
 const Question = require("../models/question")
 const Solution = require("../models/solution")
 
-exports.addView = async(req,res,next)=>{
-    try{
-        const ip = req.ip;   
-        if(req.query.type=='question')
-        {
-            let question=await Question.findById(req.params.id);
-            const index = question.ips.indexOf(ip);
-            if (index == -1){
-                question.ips.push(ip);
-                question.views++;
-                question.save();
+exports.addView = async (req, res, next) => {
+    try {
+        const ip = req.ip;
+        if (req.query.type == 'question') {
+            let question = await Question.findById(req.params.id);
+            for (var i = 0; i < question.ips.length; i++) {
+                if (question.ips[i].ip == ip) {
+                    question.ips[i].count = min(question.ips[i].count + 1, 3);
+                    break;
+                }
             }
+
+            question.ips.push({
+                ip: ip,
+                count: 1
+            });
+            question.views++;
+            question.save();
+
         }
-        else if(req.query.type=='solution'){
-            let solution=await Solution.findById(req.params.id);
-            const index = solution.ips.indexOf(ip);
-            if (index == -1){
-                solution.ips.push(ip);
-                solution.views++;
-                solution.save();
+        else if (req.query.type == 'solution') {
+            let solution = await Solution.findById(req.params.id);
+            for (var i = 0; i < solution.ips.length; i++) {
+                if (solution.ips[i].ip == ip) {
+                    solution.ips[i].count = min(solution.ips[i].count + 1, 3);
+                    break;
+                }
             }
+            solution.ips.push({
+                ip: ip,
+                count: 1
+            });
+            solution.views++;
+            solution.save();
         }
         next();
     }
-    catch(err)
-    {
+    catch (err) {
         next(err);
     }
 }

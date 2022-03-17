@@ -8,6 +8,7 @@ exports.askQuestion = async (req, res, next) => {
     console.log(req.body);
 
     let img = req.files.image || undefined;
+    console.log(img);
     let imagesArray = [];
     if (img) {
       img.forEach(async (image) => {
