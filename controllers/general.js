@@ -1,5 +1,7 @@
 const Form = require("../models/form");
 const sendMail = require("../helpers/send_mail");
+const question = require("../models/question");
+const Question = require("../models/question")
 
 exports.contact = async (req,res) => {
     const form = new Form({
@@ -17,4 +19,12 @@ exports.contact = async (req,res) => {
 exports.ip = async(req,res) => {
     const IP = req.socket.remoteAddress || null;
     res.send(IP);
+}
+
+exports.countIp = async(req, res, next) => {
+    if(req.query.type=='question')
+    {
+        let question=await question.findById(req.params.id);
+        question.ips.push()
+    }
 }

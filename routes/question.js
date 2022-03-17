@@ -16,6 +16,7 @@ const { uploadSolution, deleteQuestion } = require("../controllers/solution");
 const auth = require("../helpers/jwt-config");
 const { isAuth } = require("../helpers/auth_middleware");
 const { tagGen } = require("../helpers/tag_generator");
+const { addView } = require("../helpers/view_helper")
 
 //Routes
 router.get("/ask", (req, res) => {
@@ -34,7 +35,7 @@ router.post("/getQuestionTitle", async (req, res) => {
   res.json({ title: question.questionTitle });
 });
 
-router.get("/list/:id", questionDetails);
+router.get("/list/:id",addView, questionDetails);
 
 router.post(
   "/:questionID/answer",

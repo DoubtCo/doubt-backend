@@ -36,6 +36,15 @@ let solutionSchema=new mongoose.Schema({
     type:{
         type:String,
         enum: ['answer', 'assignment']
+    },
+    ips:[
+        {
+          type:String
+        }
+      ],
+    views:{
+        type:Number,
+        default:0
     }
 },{timestamps:true});
 

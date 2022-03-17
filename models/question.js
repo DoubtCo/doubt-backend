@@ -28,6 +28,15 @@ const questionSchema = new mongoose.Schema({
     type: mongoose.SchemaTypes.ObjectId,
     ref: 'image'
   }],
+  ips:[
+    {
+      type:String
+    }
+  ],
+  views:{
+    type:Number,
+    default: 0
+  }
 });
 
 questionSchema.virtual("solutionCount").get(function () {
