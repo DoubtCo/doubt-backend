@@ -7,6 +7,6 @@ const { upload } = require("../helpers/multer_connection");
 const { assignmentUpload, getAllAssignments } = require("../controllers/assignment");
 
 router.get("/:college/:semester/:branch", getAllAssignments);
-router.post("/:college/:semester/:branch/upload",auth,isUploader, upload.fields([{name: "notes", maxCount:3},{name:"thumbnail",maxCount:1}]), assignmentUpload);
+router.post("/:college/:semester/:branch/upload",auth,isUploader, upload.fields([{name: "notes", maxCount:3}]), assignmentUpload);
 
 module.exports = router;

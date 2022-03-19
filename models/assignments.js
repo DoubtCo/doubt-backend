@@ -24,9 +24,6 @@ const assignmentSchema=new mongoose.Schema({
             title:{
                 type:String
             },
-            thumbnailURL:{
-                type:String
-            },
             assignmentId:{
                 type:mongoose.SchemaTypes.ObjectId,
                 ref:'solution'

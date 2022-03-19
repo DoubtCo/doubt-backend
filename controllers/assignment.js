@@ -2,10 +2,10 @@ const Solution = require("../models/solution")
 const Note = require("../models/notes")
 const Assignment = require("../models/assignments")
 const User = require('../models/user');
+
 exports.assignmentUpload = async (req, res) => {
     try {
         let note = req.files.notes;
-        let thumbnail = req.files.thumbnail;
 
         let notesArray = [];
         if (note) {
@@ -35,7 +35,6 @@ exports.assignmentUpload = async (req, res) => {
             deadline: req.body.deadline,
             title: req.body.assignmentTitle,
             assignmentId: solution._id,
-            thumbnailURL: thumbnail[0].location
         }
         const foundAssignment = await Assignment.findOne({ college: req.params.college, sem: req.params.semester, branch: req.params.branch });
 
