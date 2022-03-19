@@ -36,9 +36,9 @@ exports.addView = async (req, res, next) => {
             for (var i = 0; i < solution.ips.length; i++) {
                 if (solution.ips[i].ip == ip) {
                     solution.ips[i].count++;
-                    if(solution.ips[i].count>3)
+                    if(solution.ips[i].count>5)
                     {
-                        solution.ips[i].count=3;
+                        solution.ips[i].count=5;
                     }
                     else{
                         solution.views++;
