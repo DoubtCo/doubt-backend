@@ -4,7 +4,7 @@ const Question = require("../models/question");
 const Video = require("../models/video");
 const Image = require("../models/image");
 const Note = require("../models/notes");
-const User=require('../models/user');
+const User = require("../models/user");
 
 //Dependencies
 const sendMail = require("../helpers/send_mail");
@@ -40,11 +40,11 @@ deleteSolution = async (solutionId) => {
     imageIdArray.forEach((imageId) => {
       deleteObjectName("image", Image, imageId);
     });
-    
+
     noteIdArray.forEach((noteId) => {
       deleteObjectName("note", Note, noteId);
     });
-    
+
     await Solution.findByIdAndDelete(solutionId);
   }
 };
@@ -77,19 +77,20 @@ exports.reportSolution = async (req, res) => {
 
 exports.uploadSolution = async (req, res) => {
   try {
-    let vid = req.files.video || undefined;
-    console.log(vid);
+    let [vid] = req.files.video || undefined;
+    // console.log(vid);
     let videoID = undefined;
-    console.log('hello');
+    console.log("hello");
     if (vid) {
       let newVideo = new Video({
         Key: vid.key,
         Bucket: vid.bucket,
         URL: vid.location,
       });
-      videoID = newVideo._id;
       await newVideo.save();
+      videoID = newVideo._id;
     }
+    console.log("Video Uploaded");
 
     let img = req.files.image || undefined;
     let imagesArray = [];
@@ -104,6 +105,7 @@ exports.uploadSolution = async (req, res) => {
         await newImage.save();
       });
     }
+    console.log("Image uploaded");
 
     let note = req.files.notes || undefined;
     let notesArray = [];
@@ -118,19 +120,19 @@ exports.uploadSolution = async (req, res) => {
         await newNote.save();
       });
     }
-   
+    // console.log(req.user);
     let solution = new Solution({
-      type: 'answer',
+      type: "answer",
       description: req.body.description || undefined,
       video: videoID,
       image: imagesArray,
       note: notesArray,
-      createdBy: req.user._id
+      createdBy: req.user._id,
     });
-    console.log(solution);
-    let currentUser = await User.findById(req.user._id);
-    currentUser.solutionUploads.push(solution._id);
-    await currentUser.save();
+    // console.log(solution);
+    // req.user.solutionUploads.push(solution._id);
+    // await req.user.save();
+    console.log("Answer saved");
     await solution.save();
 
     let question = await Question.findById(req.params.questionID);
@@ -143,7 +145,6 @@ exports.uploadSolution = async (req, res) => {
     res.send(error);
   }
 };
-
 
 exports.deleteQuestion = async (req, res) => {
   try {

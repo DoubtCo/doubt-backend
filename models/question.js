@@ -1,48 +1,53 @@
 const mongoose = require("mongoose");
 const User = require("./user");
 
-const questionSchema = new mongoose.Schema({
-  questionTitle: String,
-  questionDesc: String,
-  answerStatus: {
-    type: Boolean,
-    default: false,
-  },
-  askedBy: {
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: "user",
-  },
-  solutionId: [
-    {
-      type: mongoose.SchemaTypes.ObjectId,
-      ref: "solution",
+const questionSchema = new mongoose.Schema(
+  {
+    questionTitle: String,
+    questionDesc: String,
+    answerStatus: {
+      type: Boolean,
+      default: false,
     },
-  ],
-  tags: [
-    {
+    askedBy: {
       type: mongoose.SchemaTypes.ObjectId,
-      ref: "tag",
+      ref: "user",
     },
-  ],
-  image: [{
-    type: mongoose.SchemaTypes.ObjectId,
-    ref: 'image'
-  }],
-  ips:[
-    {
-      ip:{
-        type:String
+    solutionId: [
+      {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "solution",
       },
-      count:{
-        type:Number
-      }
-    }
-  ],
-  views:{
-    type:Number,
-    default: 0
-  }
-});
+    ],
+    tags: [
+      {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "tag",
+      },
+    ],
+    image: [
+      {
+        type: mongoose.SchemaTypes.ObjectId,
+        ref: "image",
+      },
+    ],
+    ips: [
+      {
+        ip: {
+          type: String,
+        },
+        count: {
+          type: Number,
+        },
+      },
+    ],
+    views: {
+      type: Number,
+      default: 0,
+    },
+  },
+  { timestamps: true }
+);
 
 questionSchema.virtual("solutionCount").get(function () {
   let solutionCount;

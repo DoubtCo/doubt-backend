@@ -100,7 +100,7 @@ exports.jwtSignIn = async (req, res, next) => {
           httpOnly: true,
         });
 
-        res.send({ status: "done" });
+        res.send(user);
       } else if (user.activationStatus !== "active") {
         throw new Error("Please verify account through mail.");
       }
@@ -139,10 +139,10 @@ exports.jwtSignOut = async (req, res, next) => {
     req.user.tokens = req.user.tokens.filter((token) => {
       return token.token !== req.token;
     });
-    
+
     await req.user.save();
-    
-    res.cookie("jwt", '', {maxAge: 1});
+
+    res.cookie("jwt", "", { maxAge: 1 });
     res.send({ status: "Signed Out" });
   } catch (err) {
     next(err);

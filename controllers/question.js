@@ -1,7 +1,7 @@
 const question = require("../models/question");
 const Question = require("../models/question");
 const Image = require("../models/image");
-const User=require("../models/user");
+const User = require("../models/user");
 
 exports.askQuestion = async (req, res, next) => {
   try {
@@ -26,7 +26,7 @@ exports.askQuestion = async (req, res, next) => {
       questionDesc: req.body.questionDesc,
       askedBy: req.user._id,
       tags: req.tagsArray,
-      image:imagesArray
+      image: imagesArray,
     });
     let currentUser = await User.findById(req.user._id);
     currentUser.questionUploads.push(newQuestion._id);
@@ -51,7 +51,6 @@ exports.listQuestions = async (req, res) => {
         };
         return questionObj;
       });
-      console.log(sendQues);
       if (err) {
         res.json({ error: err });
       } else {
@@ -61,15 +60,13 @@ exports.listQuestions = async (req, res) => {
 };
 
 exports.questionDetails = async (req, res) => {
-  // let question = await Question.findById(req.params.id);
-
-  // if (!question) {
-  //   res.send("not found");
-  // }
-  // res.send(question);
-
   await Question.findOne({ _id: req.params.id })
-    .populate("solutionId tags askedBy")
+    .populate("solutionId tags")
+    .populate("askedBy", "name")
+    .populate({
+      path: "solutionId",
+      populate: { path: "createdBy", select: ["name"] },
+    })
     .exec()
     .then((questions, err) => {
       console.log(questions);

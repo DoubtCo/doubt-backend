@@ -16,13 +16,19 @@ const { uploadSolution, deleteQuestion } = require("../controllers/solution");
 const auth = require("../helpers/jwt-config");
 const { isAuth } = require("../helpers/auth_middleware");
 const { tagGen } = require("../helpers/tag_generator");
-const { addView } = require("../helpers/view_helper")
+const { addView } = require("../helpers/view_helper");
 
 //Routes
 router.get("/ask", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "/public/question.html"));
 });
-router.post("/ask", auth, tagGen, upload.fields([{name:"image", maxCount: 3}]), askQuestion);
+router.post(
+  "/ask",
+  auth,
+  tagGen,
+  upload.fields([{ name: "image", maxCount: 3 }]),
+  askQuestion
+);
 router.get("/list", listQuestions);
 router.get("/listQuestions", (req, res) => {
   res.sendFile(path.join(__dirname, "..", "/public/questionDisplay.html"));
@@ -35,11 +41,11 @@ router.post("/getQuestionTitle", async (req, res) => {
   res.json({ title: question.questionTitle });
 });
 
-router.get("/list/:id",addView, questionDetails);
+router.get("/list/:id", addView, questionDetails);
 
 router.post(
   "/:questionID/answer",
-  // auth,
+  auth,
   upload.fields([
     { name: "video", maxCount: 1 },
     { name: "image", maxCount: 4 },
